@@ -98,6 +98,25 @@ void printPlatform(struct Platform* platform) {
         platform->x, platform->y, platform->with, platform->height, platform->type);
 }
 
+
+void initEnemy(struct Enemy* enemy, float x, float y, int width, int weight, int state) {
+    enemy->x = x;
+    enemy->y = y;
+    enemy->width = width;
+    enemy->weight = weight;
+    enemy->state = state;
+}
+
+void updateEnemy(struct Enemy* enemy, float dx, float dy) {
+    enemy->x += dx;
+    enemy->y += dy;
+}
+
+void printEnemy(struct Enemy* enemy) {
+    printf("Enemy position: (%.2f, %.2f), width: %d, weight: %d, state: %d\n",
+        enemy->x, enemy->y, enemy->width, enemy->weight, enemy->state);
+}
+
  
 
 int main()
@@ -109,6 +128,14 @@ int main()
     struct Platform platform;
     initPlatform(&platform, 10.0f, 5.0f, 50, 10, 1);
     printPlatform(&platform);
+
+
+    struct Enemy* enemy = (struct Enemy*)malloc(sizeof(struct Enemy));
+    initEnemy(enemy, 20.0f, 10.0f, 15, 25, 0);
+    printEnemy(enemy);
+    free(enemy);
+
+     
     printf("\n");
 }
 
