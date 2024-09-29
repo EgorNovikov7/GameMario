@@ -1,27 +1,72 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
- 
 
+// Описание главного персонажа
 struct Mario {
-    float x;
-    float y;
-    int width;
-    int weight;
-    int lives;
-    int state;
-    int isJump;
+    float x; // Координаты по x
+    float y; // Координаты по y
+    int width; // Рост
+    int weight; // Вес
+    int lives; // Количестов жизней
+    int state; // Начальное состояни
+    int isJump;// Не прыгает
 };
 
+// Функции для работы с персонажем
+struct Mario initMario(float x, float y, int width, int weight, int lives) {
+    struct Mario mario;
+    mario.x = x; 
+    mario.y = y;   
+    mario.width = width;   
+    mario.weight = weight; 
+    mario.lives = lives;  
+    mario.state = 0;  
+    mario.isJump = 0;  
+    return mario;  
+}
+
+void printMario(struct Mario mario) {  
+    printf("Информация об игроке:\n" );
+    printf("Расположение по x: %f\n", mario.x);
+    printf("Расположение по y: %f\n", mario.y);
+    printf("Высота: %d\n", mario.width);
+    printf("Ширина: %d\n", mario.weight);
+    printf("Количество жизней %d\n", mario.lives);
+    printf("\n");
+}
+
+
+// Описание платфор с которыми взаимодействует персонаж
 struct Platform {
     float x;
     float y;
-    int with;
+    int width;
     int height;
     int type;
-
 };
 
+// Функции для работы с платформами
+struct Platform initPlatform(float x, float y, int width, int height) {
+    struct Platform platform;
+    platform.x = x;
+    platform.y = y;
+    platform.width = width;
+    platform.height = height;
+    return platform;
+}
+
+void printPlatform(struct Platform platform) { // Передаем по значению
+    printf("Информация об платформе:\n");
+    printf("Расположение по x: %f\n", platform.x);
+    printf("Расположение по y: %f\n", platform.y);
+    printf("Высота: %d\n", platform.width);
+    printf("ширина: %d\n", platform.height);
+    printf("\n");
+}
+
+
+// Описание врагов 
 struct Enemy {
     float x;
     float y;
@@ -30,26 +75,32 @@ struct Enemy {
     int state;
 };
 
-struct Coin{
+
+// Валюта 
+struct Coin {
     float x;
     float y;
     int collected;
 };
 
-struct Star
-{
+
+// Количество бонусов за пройденный уровень
+struct Star {
     float x;
     float y;
     int collected;
 };
 
-struct Key
-{
+
+// Координаты ключа где находится ключ
+struct Key {
     float x;
     float y;
-
 };
 
+
+
+// Описание двери для ключа
 struct Door {
     float x;
     float y;
@@ -58,85 +109,29 @@ struct Door {
     int locked;
 };
 
-struct Map{
+// Карта 
+struct Map {
     int x, y;
     float width;
-    float weight;
+    float height; 
     float scrollSpeed;
 };
 
-void initMario(struct Mario* mario, float x, float y, int width, int weight, int lives, int state, int isJump) {
-    mario->x = x;
-    mario->y = y;
-    mario->width = width;
-    mario->weight = weight;
-    mario->lives = lives;
-    mario->state = state;
-    mario->isJump = isJump;
-}
-
-void updateMario(struct Mario* mario, float dx, float dy) {
-    mario->x += dx;
-    mario->y += dy;
-}
-
-void printMario(struct Mario* mario) {
-    printf("Mario position: (%.2f, %.2f), width: %d, weight: %d, lives: %d, state: %d, isJump: %d\n",
-        mario->x, mario->y, mario->width, mario->weight, mario->lives, mario->state, mario->isJump);
-}
-
-void initPlatform(struct Platform* platform, float x, float y, int with, int height, int type) {
-    platform->x = x;
-    platform->y = y;
-    platform->with = with;
-    platform->height = height;
-    platform->type = type;
-}
-
-void printPlatform(struct Platform* platform) {
-    printf("Platform position: (%.2f, %.2f), width: %d, height: %d, type: %d\n",
-        platform->x, platform->y, platform->with, platform->height, platform->type);
-}
-
-
-void initEnemy(struct Enemy* enemy, float x, float y, int width, int weight, int state) {
-    enemy->x = x;
-    enemy->y = y;
-    enemy->width = width;
-    enemy->weight = weight;
-    enemy->state = state;
-}
-
-void updateEnemy(struct Enemy* enemy, float dx, float dy) {
-    enemy->x += dx;
-    enemy->y += dy;
-}
-
-void printEnemy(struct Enemy* enemy) {
-    printf("Enemy position: (%.2f, %.2f), width: %d, weight: %d, state: %d\n",
-        enemy->x, enemy->y, enemy->width, enemy->weight, enemy->state);
-}
-
  
 
-int main()
-{
+
+// Функция main
+int main() {
     setlocale(LC_ALL, "Rus");
-    struct Mario mario;
-    initMario(&mario, 0.0f, 0.0f, 10, 20, 3, 1, 0);
-    printMario(&mario);
-    struct Platform platform;
-    initPlatform(&platform, 10.0f, 5.0f, 50, 10, 1);
-    printPlatform(&platform);
 
+    // Статическая переменная Platform
+    struct Platform staticPlatform = initPlatform(100.0f, 200.0f, 300, 20);
+    printPlatform(staticPlatform);
 
-    struct Enemy* enemy = (struct Enemy*)malloc(sizeof(struct Enemy));
-    initEnemy(enemy, 20.0f, 10.0f, 15, 25, 0);
-    printEnemy(enemy);
-    free(enemy);
+    // Динамическая переменная Mario
+    struct Mario dynamicMario = initMario(10.0f, 10.0f, 50, 70, 3);
+    printMario(dynamicMario);
 
-     
-    printf("\n");
+    return 0;
 }
-
  
