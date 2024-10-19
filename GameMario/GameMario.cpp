@@ -6,35 +6,61 @@
 using namespace std;
 
 
+
+ 
+
 // Класс, описывающий игрока
 class Player {
 private:
-
-    int lives;     // Количество жизней игрока
-    int height;   // Рост игрока
-    int weight;  // Ширина игрока
-
+    int lives;
+    int height;
+    int weight;
 
 public:
+    Player() : lives(0), height(0), weight(0) {}
 
-    Player() {                                  // Пустой конструктор
-        lives = height = weight = 0;
-
-    }
-
-    Player(int lives, int height, int weight) {       // Конструктор с параметрами
-
+    Player(int lives, int height, int weight) {
         this->lives = lives;
         this->height = height;
         this->weight = weight;
     }
 
-
-    // Метод для вывода информации об игроке
     void printPlayer() {
-        cout << "Количество жизней: " << lives << " Рост: " << height << " Ширина: " << weight << endl;
+        cout << "Количество жизней: " << lives
+            << " Рост: " << height
+            << " Вес: " << weight << endl;
     }
 
+    // Метод для изменения жизней
+    void loseLife() {
+        if (lives > 0) {
+            lives--;
+        }
+    }
+
+    // Метод для получения количества жизней
+    int getLives() const {
+        return lives;
+    }
+};
+
+class Game {
+private:
+    Player player; // Ассоциация с классом Player
+
+public:
+    Game(const Player& player) : player(player) {}
+
+    void startGame() {
+        cout << "Игра началась!" << endl;
+        player.printPlayer();
+    }
+
+    void playerLosesLife() {
+        player.loseLife();
+        cout << "Игрок потерял жизнь!" << endl;
+        cout << "Осталось жизней: " << player.getLives() << endl;
+    }
 };
 
 
@@ -147,6 +173,26 @@ public:
 // Функция main
 int main() {
     setlocale(LC_ALL, "Rus");
+
+
+    //
+    // Создаем игрока с 3 жизнями, ростом 180 и весом 75
+    Player player(3, 180, 75);
+
+    // Создаем игру с этим игроком
+    Game game(player);
+
+    // Запускаем игру
+    game.startGame();
+
+    // Игрок теряет жизнь
+    game.playerLosesLife();
+    game.playerLosesLife();
+    cout << endl;
+
+
+
+
     // Динамический массив объектов класса Player
     int size = 3;
     Player* masPlayer = new Player[size];
@@ -176,6 +222,10 @@ int main() {
     }
 
     delete[] masEnemy; // Удаляем массив Enemy
+    
+
+
+    
     
 
     return 0;
