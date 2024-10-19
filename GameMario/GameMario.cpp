@@ -62,6 +62,85 @@ public:
 
 
 };
+
+// Класс, описывающий уровень игры
+class Level {
+private:
+    int number;
+    int enemy;
+    int coins;
+public:
+
+};
+
+// Класс, описывающий карту игры
+class Map {
+private:
+
+public:
+
+};
+
+// Класс, описывающий платформы
+class Platforms {
+private:
+    bool stat;
+    int left;
+    int right;
+public:
+
+};
+
+// Класс, описывающий меню игры
+class Menu {
+private:
+    string start;
+    string exit;
+    string records;
+    string level;
+public:
+
+};
+
+// Класс, описывающий монеты
+class Coins {
+private:
+    int kolichestvo;
+    string color;
+public:
+
+};
+
+// Класс, описывающий блоки
+class Blocks {
+private:
+    string color;
+    bool destructible;
+    bool undestructible;
+public:
+
+};
+
+
+
+
+// Класс, описывающий рекорды игры
+class Records {
+private:
+    int records;
+    int score_level;
+public:
+
+};
+
+// Класс, описывающий музыку в игре
+class Music {
+private:
+    int died;
+    string radio;
+public:
+
+};
  
 
 
