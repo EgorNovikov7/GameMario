@@ -1,136 +1,103 @@
-﻿#include <stdio.h>
-#include <stdlib.h>
+﻿#include <iostream>
 #include <locale.h>
+#include <string>
 
-// Описание главного персонажа
-struct Mario {
-    float x; // Координаты по x
-    float y; // Координаты по y
-    int width; // Рост
-    int weight; // Вес
-    int lives; // Количестов жизней
-    int state; // Начальное состояни
-    int isJump;// Не прыгает
+ 
+using namespace std;
+
+
+// Класс, описывающий игрока
+class Player {
+private:
+
+    int lives;     // Количество жизней игрока
+    int height;   // Рост игрока
+    int weight;  // Ширина игрока
+
+
+public:
+
+    Player() {                                  // Пустой конструктор
+        lives = height = weight = 0;
+
+    }
+
+    Player(int lives, int height, int weight) {       // Конструктор с параметрами
+
+        this->lives = lives;
+        this->height = height;
+        this->weight = weight;
+    }
+
+
+    // Метод для вывода информации об игроке
+    void printPlayer() {
+        cout << "Количество жизней: " << lives << " Рост: " << height << " Ширина: " << weight << endl;
+    }
+
 };
 
-// Функции для работы с персонажем
-struct Mario initMario(float x, float y, int width, int weight, int lives) {
-    struct Mario mario;
-    mario.x = x; 
-    mario.y = y;   
-    mario.width = width;   
-    mario.weight = weight; 
-    mario.lives = lives;  
-    mario.state = 0;  
-    mario.isJump = 0;  
-    return mario;  
-}
 
-void printMario(struct Mario mario) {  
-    printf("Информация об игроке:\n" );
-    printf("Расположение по x: %f\n", mario.x);
-    printf("Расположение по y: %f\n", mario.y);
-    printf("Высота: %d\n", mario.width);
-    printf("Ширина: %d\n", mario.weight);
-    printf("Количество жизней %d\n", mario.lives);
-    printf("\n");
-}
-
-
-// Описание платфор с которыми взаимодействует персонаж
-struct Platform {
-    float x;
-    float y;
-    int width;
+// Класс, описывающий врага
+class Enemy {
+private:
+    int lives;
     int height;
-    int type;
-};
-
-// Функции для работы с платформами
-struct Platform initPlatform(float x, float y, int width, int height) {
-    struct Platform platform;
-    platform.x = x;
-    platform.y = y;
-    platform.width = width;
-    platform.height = height;
-    return platform;
-}
-
-void printPlatform(struct Platform platform) { // Передаем по значению
-    printf("Информация об платформе:\n");
-    printf("Расположение по x: %f\n", platform.x);
-    printf("Расположение по y: %f\n", platform.y);
-    printf("Высота: %d\n", platform.width);
-    printf("ширина: %d\n", platform.height);
-    printf("\n");
-}
-
-
-// Описание врагов 
-struct Enemy {
-    float x;
-    float y;
-    int width;
     int weight;
-    int state;
+
+public:
+    Enemy() {
+        lives = height = weight = 0;
+    }
+
+    Enemy(int lives, int height, int weight) {
+        this->height = height;
+        this->weight = weight;
+        this->lives = lives;
+    }
+
+    void printEnemy() {
+        cout << "Количество жизней: " << lives << " Рост: " << height << " Ширина: " << weight << endl;
+    }
+
+
 };
-
-
-// Валюта 
-struct Coin {
-    float x;
-    float y;
-    int collected;
-};
-
-
-// Количество бонусов за пройденный уровень
-struct Star {
-    float x;
-    float y;
-    int collected;
-};
-
-
-// Координаты ключа где находится ключ
-struct Key {
-    float x;
-    float y;
-};
-
-
-
-// Описание двери для ключа
-struct Door {
-    float x;
-    float y;
-    int width;
-    int height;
-    int locked;
-};
-
-// Карта 
-struct Map {
-    int x, y;
-    float width;
-    float height; 
-    float scrollSpeed;
-};
-
  
 
 
 // Функция main
 int main() {
     setlocale(LC_ALL, "Rus");
+    // Динамический массив объектов класса Player
+    int size = 3;
+    Player* masPlayer = new Player[size];
+    for (int i = 0; i < size; i++) {
+        masPlayer[i] = Player(3 - i, 20, 30);  // Создаем объект Player и присваиваем его
+        masPlayer[i].printPlayer();  // Выводим информацию о Player
+    }
+    delete[] masPlayer; // Удаляем массив Player
 
-    // Статическая переменная Platform
-    struct Platform staticPlatform = initPlatform(100.0f, 200.0f, 300, 20);
-    printPlatform(staticPlatform);
 
-    // Динамическая переменная Mario
-    struct Mario dynamicMario = initMario(10.0f, 10.0f, 50, 70, 3);
-    printMario(dynamicMario);
+    cout << endl;
+
+
+    // Массив динамических объектов класса Enemy
+    Enemy** masEnemy = new Enemy * [size];
+
+    // Инициализируем каждый элемент массива
+    for (int i = 0; i < size; i++) {
+        masEnemy[i] = new Enemy(2 - i, 20, 30);   // Создаем объект Enemy и присваиваем его элементу массива
+        masEnemy[i]->printEnemy();   // Выводим информацию о Enemy
+    }
+
+
+    // Удаляем объекты Enemy
+    for (int i = 0; i < size; i++) {
+        delete masEnemy[i];
+    }
+
+    delete[] masEnemy; // Удаляем массив Enemy
+    
 
     return 0;
 }
