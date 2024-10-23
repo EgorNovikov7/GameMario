@@ -44,24 +44,7 @@ public:
     }
 };
 
-class Game {
-private:
-    Player player; // Ассоциация с классом Player
 
-public:
-    Game(const Player& player) : player(player) {}
-
-    void startGame() {
-        cout << "Игра началась!" << endl;
-        player.printPlayer();
-    }
-
-    void playerLosesLife() {
-        player.loseLife();
-        cout << "Игрок потерял жизнь!" << endl;
-        cout << "Осталось жизней: " << player.getLives() << endl;
-    }
-};
 
 
 // Класс, описывающий врага
@@ -89,32 +72,21 @@ public:
 
 };
 
-// Класс, описывающий уровень игры
-class Level {
-private:
-    int number;
-    int enemy;
-    int coins;
-public:
-
-};
-
-// Класс, описывающий карту игры
-class Map {
-private:
-
-public:
-
-};
-
+ 
 // Класс, описывающий платформы
 class Platforms {
 private:
     bool stat;
     int left;
     int right;
-public:
 
+public:
+    Platforms(bool status, int l, int r) : stat(status), left(l), right(r) {}
+
+    void displayPlatform() {
+        cout << "Platform Status: " << (stat ? "Active" : "Inactive")
+            << ", Left Bound: " << left << ", Right Bound: " << right << endl;
+    }
 };
 
 // Класс, описывающий меню игры
@@ -123,18 +95,30 @@ private:
     string start;
     string exit;
     string records;
-    string level;
-public:
 
+public:
+    Menu(string s, string e, string r) : start(s), exit(e), records(r) {}
+
+    void showMenu() {
+        cout << "Menu:\n"
+            << "1. " << start << "\n"
+            << "2. " << records << "\n"
+            << "3. " << exit << endl;
+    }
 };
 
 // Класс, описывающий монеты
 class Coins {
 private:
-    int kolichestvo;
+    int quantity;
     string color;
-public:
 
+public:
+    Coins(int qty, string c) : quantity(qty), color(c) {}
+
+    void displayCoins() {
+        cout << "Coins: " << quantity << ", Color: " << color << endl;
+    }
 };
 
 // Класс, описывающий блоки
@@ -142,21 +126,27 @@ class Blocks {
 private:
     string color;
     bool destructible;
-    bool undestructible;
+
 public:
+    Blocks(string c, bool d) : color(c), destructible(d) {}
 
+    void displayBlock() {
+        cout << "Block Color: " << color << ", Destructible: " << (destructible ? "Yes" : "No") << endl;
+    }
 };
-
-
-
 
 // Класс, описывающий рекорды игры
 class Records {
 private:
-    int records;
-    int score_level;
-public:
+    int record;
+    int scoreLevel;
 
+public:
+    Records(int r, int s) : record(r), scoreLevel(s) {}
+
+    void displayRecords() {
+        cout << "Record: " << record << ", Score Level: " << scoreLevel << endl;
+    }
 };
 
 // Класс, описывающий музыку в игре
@@ -164,33 +154,46 @@ class Music {
 private:
     int died;
     string radio;
-public:
 
+public:
+    Music(int d, string r) : died(d), radio(r) {}
+
+    void playMusic() {
+        cout << "Music Playing: " << radio << " | Died: " << died << " times." << endl;
+    }
 };
- 
+
+// Основной класс Game
+class Game {
+private:
+    Platforms platform;
+    Menu menu;
+    Coins coin;
+    Blocks block;
+    Records record;
+    Music music;
+
+public:
+    Game(Platforms p, Menu m, Coins c, Blocks b, Records r, Music mu)
+        : platform(p), menu(m), coin(c), block(b), record(r), music(mu) {}
+
+    void startGame() {
+        cout << "Starting the Game:\n";
+        menu.showMenu();
+        platform.displayPlatform();
+        coin.displayCoins();
+        block.displayBlock();
+        record.displayRecords();
+        music.playMusic();
+    }
+};
+
+
 
 
 // Функция main
 int main() {
     setlocale(LC_ALL, "Rus");
-
-
-    //
-    // Создаем игрока с 3 жизнями, ростом 180 и весом 75
-    Player player(3, 180, 75);
-
-    // Создаем игру с этим игроком
-    Game game(player);
-
-    // Запускаем игру
-    game.startGame();
-
-    // Игрок теряет жизнь
-    game.playerLosesLife();
-    game.playerLosesLife();
-    cout << endl;
-
-
 
 
     // Динамический массив объектов класса Player
@@ -225,7 +228,20 @@ int main() {
     
 
 
-    
+    cout << endl;
+
+    Platforms platform(true, 0, 100);
+    Menu menu("Start Game", "Exit", "Records");
+    Coins coins(10, "Gold");
+    Blocks block("Red", true);
+    Records record(1000, 5);
+    Music music(3, "Game Theme");
+
+    Game game(platform, menu, coins, block, record, music);
+    game.startGame();
+
+
+    cout << endl;
     
 
     return 0;
