@@ -60,6 +60,11 @@ public:
     }
 };
 
+// Дружественная функция
+void displayPlayer(Player& player) {
+    player.printPlayer();
+}
+
 
 
 
