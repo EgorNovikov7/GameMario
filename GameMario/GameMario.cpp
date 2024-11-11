@@ -230,53 +230,31 @@ int main() {
     setlocale(LC_ALL, "Rus");
 
 
+    // Использование конструктора, перегрузки операторов и дружественной функции
+    Player player1(3, 180, 75);
+    displayPlayer(player1);
+
     // Динамический массив объектов класса Player
-    int size = 3;
-    Player* masPlayer = new Player[size];
-    for (int i = 0; i < size; i++) {
-        masPlayer[i] = Player(3 - i, 20, 30);  // Создаем объект Player и присваиваем его
-        masPlayer[i].printPlayer();  // Выводим информацию о Player
-    }
-    delete[] masPlayer; // Удаляем массив Player
+    vector<Player> players;
+    players.push_back(player1); // Конструктор копии
+    players.push_back(Player(2, 175, 70));
 
-
-    cout << endl;
-
-
-    // Массив динамических объектов класса Enemy
-    Enemy** masEnemy = new Enemy * [size];
-
-    // Инициализируем каждый элемент массива
-    for (int i = 0; i < size; i++) {
-        masEnemy[i] = new Enemy(2 - i, 20, 30);   // Создаем объект Enemy и присваиваем его элементу массива
-        masEnemy[i]->printEnemy();   // Выводим информацию о Enemy
+    for (const auto& player : players) {
+        player.printPlayer();
     }
 
+    // Статическое поле и метод
+    cout << "Количество игроков: " << players.size() << endl;
 
-    // Удаляем объекты Enemy
-    for (int i = 0; i < size; i++) {
-        delete masEnemy[i];
+    // Использование исключений
+    try {
+        if (players.empty()) {
+            throw runtime_error("Игроки не найдены!");
+        }
     }
-
-    delete[] masEnemy; // Удаляем массив Enemy
-    
-
-
-    cout << endl;
-
-    Platforms platform(true, 0, 100);
-    Menu menu("Start Game", "Exit", "Records");
-    Coins coins(10, "Gold");
-    Blocks block("Red", true);
-    Records record(1000, 5);
-    Music music(3, "Game Theme");
-
-    Game game(platform, menu, coins, block, record, music);
-    game.startGame();
-
-
-    cout << endl;
-    
+    catch (const exception& e) {
+        cout << "Ошибка: " << e.what() << endl;
+    }
 
     return 0;
 }
