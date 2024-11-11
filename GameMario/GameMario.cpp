@@ -1,7 +1,7 @@
 ﻿#include <iostream>
-#include <locale.h>
 #include <string>
-
+#include <vector>
+#include <stdexcept>
  
 using namespace std;
 
@@ -18,28 +18,44 @@ private:
 
 public:
     Player() : lives(0), height(0), weight(0) {}
+    Player(int lives, int height, int weight) : lives(lives), height(height), weight(weight) {}
 
-    Player(int lives, int height, int weight) {
-        this->lives = lives;
-        this->height = height;
-        this->weight = weight;
+    // Конструктор копии
+    Player(const Player& other) : lives(other.lives), height(other.height), weight(other.weight) {}
+
+    // Оператор присваивания
+    Player& operator=(const Player& other) {
+        if (this != &other) {
+            lives = other.lives;
+            height = other.height;
+            weight = other.weight;
+        }
+        return *this;
     }
 
-    void printPlayer() {
-        cout << "Количество жизней: " << lives
-            << " Рост: " << height
-            << " Вес: " << weight << endl;
+    void printPlayer() const {
+        cout << "Количество жизней: " << lives << ", Рост: " << height << ", Вес: " << weight << endl;
     }
 
-    // Метод для изменения жизней
     void loseLife() {
         if (lives > 0) {
             lives--;
         }
     }
 
-    // Метод для получения количества жизней
     int getLives() const {
+        return lives;
+    }
+
+    // Возврат значения через указатель
+    void getLivesViaPointer(int* p) const {
+        if (p) {
+            *p = lives;
+        }
+    }
+
+    // Возврат значения через ссылку
+    int& referenceLives() {
         return lives;
     }
 };
