@@ -66,6 +66,19 @@ void displayPlayer(Player& player) {
 }
 
 
+// Простая перегрузка оператора
+class Simple {
+public:
+    int value;
+    Simple(int v) : value(v) {}
+
+    Simple operator+(const Simple& other) {
+        return Simple(this->value + other.value);
+    }
+};
+
+
+
 
 
 // Класс, описывающий врага
