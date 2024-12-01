@@ -1,87 +1,44 @@
 ﻿#include <iostream>
 #include <string>
-#include <vector>
-#include <stdexcept>
- 
+
 using namespace std;
 
-
-
- 
-
-// Класс, описывающий игрока
+// 1) Базовый класс, описывающий игрока.
 class Player {
-private:
+protected: // Применяем модификатор protected
     int lives;
     int height;
     int weight;
 
 public:
-    Player() : lives(0), height(0), weight(0) {}
-    Player(int lives, int height, int weight) : lives(lives), height(height), weight(weight) {}
+    Player(int lives, int height, int weight)
+        : lives(lives), height(height), weight(weight) {}
 
-    // Конструктор копии
-    Player(const Player& other) : lives(other.lives), height(other.height), weight(other.weight) {}
-
-    // Оператор присваивания
-    Player& operator=(const Player& other) {
-        if (this != &other) {
-            lives = other.lives;
-            height = other.height;
-            weight = other.weight;
-        }
-        return *this;
+    virtual void displayInfo() {
+        cout << "Player: " << lives << " lives, " << height << " cm height, " << weight << " kg weight." << endl;
     }
 
-    void printPlayer() const {
-        cout << "Количество жизней: " << lives << ", Рост: " << height << ", Вес: " << weight << endl;
-    }
-
-    void loseLife() {
-        if (lives > 0) {
-            lives--;
-        }
-    }
-
-    int getLives() const {
-        return lives;
-    }
-
-    // Возврат значения через указатель
-    void getLivesViaPointer(int* p) const {
-        if (p) {
-            *p = lives;
-        }
-    }
-
-    // Возврат значения через ссылку
-    int& referenceLives() {
-        return lives;
-    }
+    // 4) Виртуальный деструктор
+    virtual ~Player() {}
 };
 
-// Дружественная функция
-void displayPlayer(Player& player) {
-    player.printPlayer();
-}
+// 1) Производный класс, описывающий супер игрока.
+class SuperPlayer : public Player {
+private:
+    int powerLevel;
 
-
-// Простая перегрузка оператора
-class Simple {
 public:
-    int value;
-    Simple(int v) : value(v) {}
+    SuperPlayer(int lives, int height, int weight, int powerLevel)
+        : Player(lives, height, weight), powerLevel(powerLevel) {}
 
-    Simple operator+(const Simple& other) {
-        return Simple(this->value + other.value);
+    // 3) Перегрузка метода displayInfo
+    void displayInfo() override {
+        Player::displayInfo(); // вызов метода базового класса
+        cout << "SuperPlayer: Power Level = " << powerLevel << endl;
     }
 };
 
-
-
-
-
-// Класс, описывающий врага
+// 1) Производный класс, описывающий врага.
 class Enemy {
 private:
     int lives;
@@ -89,25 +46,30 @@ private:
     int weight;
 
 public:
-    Enemy() {
-        lives = height = weight = 0;
+    Enemy(int lives, int height, int weight)
+        : lives(lives), height(height), weight(weight) {}
+
+    virtual void displayInfo() {
+        cout << "Enemy: " << lives << " lives, " << height << " cm height, " << weight << " kg weight." << endl;
     }
-
-    Enemy(int lives, int height, int weight) {
-        this->height = height;
-        this->weight = weight;
-        this->lives = lives;
-    }
-
-    void printEnemy() {
-        cout << "Количество жизней: " << lives << " Рост: " << height << " Ширина: " << weight << endl;
-    }
-
-
 };
 
- 
-// Класс, описывающий платформы
+// 1) Производный класс, описывающий сильного врага.
+class BossEnemy : public Enemy {
+private:
+    int damage;
+
+public:
+    BossEnemy(int lives, int height, int weight, int damage)
+        : Enemy(lives, height, weight), damage(damage) {}
+
+    void displayInfo() override {
+        Enemy::displayInfo(); // вызов метода базового класса
+        cout << "BossEnemy: Damage = " << damage << endl;
+    }
+};
+
+// 2) Класс, описывающий платформы
 class Platforms {
 private:
     bool stat;
@@ -115,110 +77,61 @@ private:
     int right;
 
 public:
-    Platforms(bool status, int l, int r) : stat(status), left(l), right(r) {}
+    Platforms(bool stat, int left, int right)
+        : stat(stat), left(left), right(right) {}
 
-    void displayPlatform() {
-        cout << "Platform Status: " << (stat ? "Active" : "Inactive")
-            << ", Left Bound: " << left << ", Right Bound: " << right << endl;
+    bool getStatus() const {
+        return stat;
     }
 };
 
-// Класс, описывающий меню игры
-class Menu {
-private:
-    string start;
-    string exit;
-    string records;
-
-public:
-    Menu(string s, string e, string r) : start(s), exit(e), records(r) {}
-
-    void showMenu() {
-        cout << "Menu:\n"
-            << "1. " << start << "\n"
-            << "2. " << records << "\n"
-            << "3. " << exit << endl;
-    }
-};
-
-// Класс, описывающий монеты
-class Coins {
-private:
-    int quantity;
-    string color;
-
-public:
-    Coins(int qty, string c) : quantity(qty), color(c) {}
-
-    void displayCoins() {
-        cout << "Coins: " << quantity << ", Color: " << color << endl;
-    }
-};
-
-// Класс, описывающий блоки
-class Blocks {
-private:
-    string color;
-    bool destructible;
-
-public:
-    Blocks(string c, bool d) : color(c), destructible(d) {}
-
-    void displayBlock() {
-        cout << "Block Color: " << color << ", Destructible: " << (destructible ? "Yes" : "No") << endl;
-    }
-};
-
-// Класс, описывающий рекорды игры
-class Records {
-private:
-    int record;
-    int scoreLevel;
-
-public:
-    Records(int r, int s) : record(r), scoreLevel(s) {}
-
-    void displayRecords() {
-        cout << "Record: " << record << ", Score Level: " << scoreLevel << endl;
-    }
-};
-
-// Класс, описывающий музыку в игре
-class Music {
-private:
-    int died;
-    string radio;
-
-public:
-    Music(int d, string r) : died(d), radio(r) {}
-
-    void playMusic() {
-        cout << "Music Playing: " << radio << " | Died: " << died << " times." << endl;
-    }
-};
-
-// Основной класс Game
+// 5) Перегрузка оператора присваивания для производного класса
 class Game {
 private:
     Platforms platform;
-    Menu menu;
-    Coins coin;
-    Blocks block;
-    Records record;
-    Music music;
 
 public:
-    Game(Platforms p, Menu m, Coins c, Blocks b, Records r, Music mu)
-        : platform(p), menu(m), coin(c), block(b), record(r), music(mu) {}
+    Game(bool stat, int left, int right)
+        : platform(stat, left, right) {}
 
-    void startGame() {
-        cout << "Starting the Game:\n";
-        menu.showMenu();
-        platform.displayPlatform();
-        coin.displayCoins();
-        block.displayBlock();
-        record.displayRecords();
-        music.playMusic();
+    Game& operator=(const Game& other) {
+        if (this != &other) {
+            this->platform = other.platform; // Здесь мы просто переписываем платформу
+        }
+        return *this;
+    }
+};
+
+// 6) Демонстрация виртуальной функции
+void demonstrateVirtualFunction() {
+    Player* player = new SuperPlayer(3, 180, 75, 5);
+    Enemy* enemy = new BossEnemy(2, 170, 70, 15);
+
+    // Полиморфный вызов
+    player->displayInfo();
+    enemy->displayInfo();
+
+    delete player;
+    delete enemy;
+}
+
+// 7) Абстрактный класс
+class GameObject {
+public:
+    virtual void update() = 0; // Абстрактный метод
+
+    virtual ~GameObject() {}
+};
+
+class Coin : public GameObject {
+private:
+    int quantity;
+
+public:
+    Coin(int quantity) : quantity(quantity) {}
+
+    void update() override {
+        cout << "Updating Coin: quantity = " << quantity << endl;
     }
 };
 
@@ -230,31 +143,15 @@ int main() {
     setlocale(LC_ALL, "Rus");
 
 
-    // Использование конструктора, перегрузки операторов и дружественной функции
-    Player player1(3, 180, 75);
-    displayPlayer(player1);
+    // Демонстрация перегрузки и полиморфизма
+    demonstrateVirtualFunction();
 
-    // Динамический массив объектов класса Player
-    vector<Player> players;
-    players.push_back(player1); // Конструктор копии
-    players.push_back(Player(2, 175, 70));
+    // Использование абстрактного класса
+    GameObject* coin = new Coin(10);
+    coin->update();
+    delete coin;
 
-    for (const auto& player : players) {
-        player.printPlayer();
-    }
-
-    // Статическое поле и метод
-    cout << "Количество игроков: " << players.size() << endl;
-
-    // Использование исключений
-    try {
-        if (players.empty()) {
-            throw runtime_error("Игроки не найдены!");
-        }
-    }
-    catch (const exception& e) {
-        cout << "Ошибка: " << e.what() << endl;
-    }
+    return 0;
 
     return 0;
 }
