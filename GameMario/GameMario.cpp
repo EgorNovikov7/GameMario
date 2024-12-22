@@ -1,11 +1,13 @@
 ﻿#include <iostream>
 #include <string>
-
+#include <vector>
+#include <algorithm> // Для std::sort и std::find_if
+#include <memory>    // Для std::unique_ptr
 using namespace std;
 
-// 1) Базовый класс, описывающий игрока.
+// Базовый класс, описывающий игрока.
 class Player {
-protected: // Применяем модификатор protected
+protected:
     int lives;
     int height;
     int weight;
@@ -15,14 +17,16 @@ public:
         : lives(lives), height(height), weight(weight) {}
 
     virtual void displayInfo() {
-        cout << "Player: " << lives << " lives, " << height << " cm height, " << weight << " kg weight." << endl;
+        cout << "Player: " << lives << " lives, " << height << " cm height, "
+            << weight << " kg weight." << endl;
     }
 
-    // 4) Виртуальный деструктор
     virtual ~Player() {}
+
+    int getLives() const { return lives; } // Метод для получения жизней
 };
 
-// 1) Производный класс, описывающий супер игрока.
+// Производный класс, описывающий супер игрока.
 class SuperPlayer : public Player {
 private:
     int powerLevel;
@@ -31,16 +35,15 @@ public:
     SuperPlayer(int lives, int height, int weight, int powerLevel)
         : Player(lives, height, weight), powerLevel(powerLevel) {}
 
-    // 3) Перегрузка метода displayInfo
     void displayInfo() override {
         Player::displayInfo(); // вызов метода базового класса
         cout << "SuperPlayer: Power Level = " << powerLevel << endl;
     }
 };
 
-// 1) Производный класс, описывающий врага.
+// Производный класс, описывающий врага.
 class Enemy {
-private:
+protected:
     int lives;
     int height;
     int weight;
@@ -50,11 +53,16 @@ public:
         : lives(lives), height(height), weight(weight) {}
 
     virtual void displayInfo() {
-        cout << "Enemy: " << lives << " lives, " << height << " cm height, " << weight << " kg weight." << endl;
+        cout << "Enemy: " << lives << " lives, " << height << " cm height, "
+            << weight << " kg weight." << endl;
     }
+
+    virtual ~Enemy() {}
+
+    int getLives() const { return lives; } // Метод для получения жизней
 };
 
-// 1) Производный класс, описывающий сильного врага.
+// Производный класс, описывающий сильного врага.
 class BossEnemy : public Enemy {
 private:
     int damage;
@@ -69,90 +77,57 @@ public:
     }
 };
 
-// 2) Класс, описывающий платформы
-class Platforms {
-private:
-    bool stat;
-    int left;
-    int right;
-
-public:
-    Platforms(bool stat, int left, int right)
-        : stat(stat), left(left), right(right) {}
-
-    bool getStatus() const {
-        return stat;
-    }
-};
-
-// 5) Перегрузка оператора присваивания для производного класса
-class Game {
-private:
-    Platforms platform;
-
-public:
-    Game(bool stat, int left, int right)
-        : platform(stat, left, right) {}
-
-    Game& operator=(const Game& other) {
-        if (this != &other) {
-            this->platform = other.platform; // Здесь мы просто переписываем платформу
-        }
-        return *this;
-    }
-};
-
-// 6) Демонстрация виртуальной функции
-void demonstrateVirtualFunction() {
-    Player* player = new SuperPlayer(3, 180, 75, 5);
-    Enemy* enemy = new BossEnemy(2, 170, 70, 15);
-
-    // Полиморфный вызов
-    player->displayInfo();
-    enemy->displayInfo();
-
-    delete player;
-    delete enemy;
+// Функция для сортировки игроков по количеству жизней
+bool comparePlayers(const unique_ptr<Player>& a, const unique_ptr<Player>& b) {
+    return a->getLives() > b->getLives(); // Сортировка по убыванию жизней
 }
 
-// 7) Абстрактный класс
-class GameObject {
-public:
-    virtual void update() = 0; // Абстрактный метод
+// Функция для поиска игрока по количеству жизней
+Player* findPlayerByLives(const vector<unique_ptr<Player>>& players, int lives) {
+    auto it = find_if(players.begin(), players.end(), [lives](const unique_ptr<Player>& player) {
+        return player->getLives() == lives;
+        });
 
-    virtual ~GameObject() {}
-};
+    return (it != players.end()) ? it->get() : nullptr; // Возвращаем указатель на найденного игрока или nullptr
+}
 
-class Coin : public GameObject {
-private:
-    int quantity;
+void demonstrateVirtualFunction() {
+    unique_ptr<Player> player = make_unique<SuperPlayer>(3, 180, 75, 5);
+    unique_ptr<Enemy> enemy = make_unique<BossEnemy>(2, 170, 70, 15);
 
-public:
-    Coin(int quantity) : quantity(quantity) {}
+    player->displayInfo();
+    enemy->displayInfo();
+}
 
-    void update() override {
-        cout << "Updating Coin: quantity = " << quantity << endl;
-    }
-};
-
-
-
-
-// Функция main
 int main() {
     setlocale(LC_ALL, "Rus");
 
+    // Создаем вектор для хранения игроков
+    vector<unique_ptr<Player>> players;
 
-    // Демонстрация перегрузки и полиморфизма
-    demonstrateVirtualFunction();
+    // Добавляем игроков в вектор
+    players.push_back(make_unique<SuperPlayer>(3, 180, 75, 5));
+    players.push_back(make_unique<SuperPlayer>(5, 175, 70, 10));
 
-    // Использование абстрактного класса
-    GameObject* coin = new Coin(10);
-    coin->update();
-    delete coin;
+    // Сортируем игроков по количеству жизней
+    sort(players.begin(), players.end(), comparePlayers);
 
-    return 0;
+    cout << "Игроки после сортировки:" << endl;
+    for (const auto& player : players) {
+        player->displayInfo();
+    }
+
+    // Поиск игрока с определенным количеством жизней
+    int searchLives = 5;
+    Player* foundPlayer = findPlayerByLives(players, searchLives);
+
+    if (foundPlayer) {
+        cout << "Игрок с " << searchLives << " жизнями найден:" << endl;
+        foundPlayer->displayInfo();
+    }
+    else {
+        cout << "Игрок с " << searchLives << " жизнями не найден." << endl;
+    }
 
     return 0;
 }
- 
